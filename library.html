@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Application</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-app="libraryApp" ng-controller="LibraryController">
+  <h1>Library Book Categories</h1>
+  
+  <!-- Table to display categories and book counts -->
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Book Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="category in library">
+        <td>{{ category.category }}</td>
+        <td>
+          <input type="number" ng-model="category.count" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Form to add a new category -->
+  <h2>Add New Category</h2>
+  <form ng-submit="addCategory()">
+    <label for="newCategory">Category Name:</label>
+    <input id="newCategory" type="text" ng-model="newCategory" required />
+    <label for="newCount">Book Count:</label>
+    <input id="newCount" type="number" ng-model="newCount" required />
+    <button type="submit">Add Category</button>
+  </form>
+
+  <!-- Error message for duplicate categories -->
+  <p style="color: red;" ng-if="errorMessage">{{ errorMessage }}</p>
+
+  <script>
+    angular.module('libraryApp', [])
+      .controller('LibraryController', function ($scope) {
+        $scope.library = [
+          { category: 'Fiction', count: 120 },
+          { category: 'Non-Fiction', count: 80 },
+          { category: 'Science', count: 150 },
+          { category: 'Mathematics', count: 70 },
+        ];
+
+        $scope.addCategory = function () {
+          if ($scope.library.find(item => item.category.toLowerCase() === $scope.newCategory.toLowerCase())) {
+            $scope.errorMessage = 'Category name must be unique.';
+          } else {
+            $scope.library.push({ category: $scope.newCategory, count: $scope.newCount });
+            $scope.newCategory = '';
+            $scope.newCount = '';
+            $scope.errorMessage = '';
+          }
+        };
+      });
+  </script>
+</body>
+</html>
