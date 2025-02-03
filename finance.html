@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="financeApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        nav a { margin: 10px; text-decoration: none; padding: 5px; }
+        .active { font-weight: bold; color: blue; }
+    </style>
+</head>
+<body ng-controller="MainController">
+    <nav>
+        <a href="#/dashboard" ng-class="{ active: isActive('/dashboard') }">Dashboard</a>
+        <a href="#/expenses" ng-class="{ active: isActive('/expenses') }">Expenses</a>
+        <a href="#/income" ng-class="{ active: isActive('/income') }">Income</a>
+    </nav>
+    
+    <div ng-view></div>
+
+    <script>
+        var app = angular.module('financeApp', ['ngRoute']);
+
+        app.config(function($routeProvider) {
+            $routeProvider
+                .when('/dashboard', {
+                    templateUrl: 'dashboard.html',
+                    controller: 'DashboardController'
+                })
+                .when('/expenses', {
+                    templateUrl: 'expenses.html',
+                    controller: 'ExpensesController'
+                })
+                .when('/income', {
+                    templateUrl: 'income.html',
+                    controller: 'IncomeController'
+                })
+                .otherwise({
+                    redirectTo: '/dashboard'
+                });
+        });
+
+        app.controller('MainController', function($scope, $location) {
+            $scope.isActive = function(route) {
+                return route === $location.path();
+            };
+        });
+
+        app.controller('DashboardController', function($scope) {
+            $scope.summary = {
+                totalIncome: 5000,
+                totalExpenses: 2000
+            };
+        });
+
+        app.controller('ExpensesController', function($scope) {
+            $scope.expenses = [
+                { id: 1, description: 'Groceries', amount: 100 },
+                { id: 2, description: 'Rent', amount: 1200 }
+            ];
+            
+            $scope.addExpense = function() {
+                if ($scope.newExpense && $scope.newExpense.description && $scope.newExpense.amount) {
+                    $scope.expenses.push({
+                        id: $scope.expenses.length + 1,
+                        description: $scope.newExpense.description,
+                        amount: parseFloat($scope.newExpense.amount)
+                    });
+                    $scope.newExpense = {};
+                }
+            };
+        });
+
+        app.controller('IncomeController', function($scope) {
+            $scope.income = [
+                { id: 1, source: 'Salary', amount: 3000 },
+                { id: 2, source: 'Freelance', amount: 2000 }
+            ];
+            
+            $scope.addIncome = function() {
+                if ($scope.newIncome && $scope.newIncome.source && $scope.newIncome.amount) {
+                    $scope.income.push({
+                        id: $scope.income.length + 1,
+                        source: $scope.newIncome.source,
+                        amount: parseFloat($scope.newIncome.amount)
+                    });
+                    $scope.newIncome = {};
+                }
+            };
+        });
+    </script>
+</body>
+</html>
